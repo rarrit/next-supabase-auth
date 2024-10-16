@@ -35,15 +35,38 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  // if (
+  //   !user &&
+  //   request.nextUrl.pathname.startsWith('/product') 
+  // ) {
+  //   // no user, potentially respond by redirecting the user to the login page    
+  //   const url = request.nextUrl.clone()
+  //   url.pathname = '/login'
+  //   return NextResponse.redirect(url)
+  // }
+
+
+
+  if(!user && request.nextUrl.pathname.startsWith('/products')) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
+  }
+  if (user) {
+    // 로그인된 사용자의 is_admin 값 확인
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id) // 로그인된 사용자의 프로필 확인
+      .single();
+
+    // console.log("profileData?.is_admin ==>", profileData?.is_admin);
+    // 프로필 데이터를 가져오는 데 실패했거나 is_admin이 false인 경우
+    if (profileData?.is_admin === false && request.nextUrl.pathname.startsWith('/products')) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/'; // 관리자가 아닌 경우 홈 페이지로 리디렉션
+      return NextResponse.redirect(url);
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

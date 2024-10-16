@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+
 import { createClient } from '@/utils/supabase/server'
 import Link from "next/link";
 import LogoutButton from './_components/LogoutButton';
@@ -7,11 +7,9 @@ import LogoutButton from './_components/LogoutButton';
 export default async function Home() {
   const supabase = createClient()
 
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
-    redirect('/login')
-  }
+  console.log(supabase.auth);
 
+  const { data } = await supabase.auth.getUser();
 
 
 
@@ -26,7 +24,7 @@ export default async function Home() {
           </>
         )
         : <Link href={"/login"}>로그인</Link>
-      }            
+      }        
     </div>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "./provider";
+import Link from "next/link";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,6 +30,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header className="flex items-center justify-between bg-[#333] p-[10px]">
+          <Link href={"/"}>홈</Link>
+          <div className="flex items-center gap-[10px]">
+            <Link href={"/products"}>제품페이지</Link>      
+          </div>          
+        </header>
         <Providers>
           {children}
         </Providers>
